@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eecba4ef81d77dd49bf8b0fc26d3eebd, type: 3}
+  m_Name: VehicleData
+  m_EditorClassIdentifier: 
+  vehicleName: Car 1
+  speed: 1500
+  steeringForce: 100
+  brakeForce: 10
+  vehicleImage: {fileID: 21300000, guid: 1a44f2e9c4834b745b77a6ab31b0636a, type: 3}
