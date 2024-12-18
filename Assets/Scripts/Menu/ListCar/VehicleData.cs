@@ -14,4 +14,7 @@ public class VehicleData : ScriptableObject
     [Header("Image:")]
     public Sprite vehicleImage;
 
+    [Header("Prefabs:")]
+    public GameObject vehiclePrefabs;
+
 }

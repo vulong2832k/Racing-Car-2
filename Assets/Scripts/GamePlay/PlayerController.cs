@@ -23,11 +23,13 @@ public class PlayerController : MonoBehaviour
 
     //
     private Rigidbody _playerRb;
+    [SerializeField] private VehicleData _vehicleData;
     void Start()
     {
         _playerRb = GetComponent<Rigidbody>();
-
         _playerRb.centerOfMass = new Vector3(0, -0.5f, 0);
+
+        GetDataFromVehicleData();
     }
     void Update()
     {
@@ -39,7 +41,15 @@ public class PlayerController : MonoBehaviour
         PlayerMovement();
         BrakeCarOfPlayer();
     }
-
+    private void GetDataFromVehicleData()
+    {
+        if (_vehicleData == null) return;
+        {
+            _playerMoveSpeed = _vehicleData.speed;
+            _playerTurnSpeed = _vehicleData.steeringForce;
+            _playerBrakeForce = _vehicleData.brakeForce;
+        }
+    }
     private void PlayerMovement()
     {
         float xDir;
@@ -63,13 +73,17 @@ public class PlayerController : MonoBehaviour
     }
     private void BrakeCarOfPlayer()
     {
-        if(_playerMoveSpeed > 0 && Input.GetKey(KeyCode.Space))
+        if(Input.GetKey(KeyCode.Space))
         {
             if (_playerRb.velocity.magnitude != 0)
             {
                 _playerRb.AddRelativeForce(-Vector3.forward * _playerBrakeForce);
                 _brakeTrack.SetActive(true);
             }
+        }
+        else
+        {
+            _brakeTrack.SetActive(false);
         }
     }
     private void RotateWheel()
@@ -119,11 +133,11 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "CheckPoint")
+        if (other.CompareTag("CheckPoint"))
         {
             GameManager.Instance.CheckPoint();
         }
-        if(other.gameObject.tag == "WinPoint")
+        if (other.CompareTag("WinPoint"))
         {
             GameManager.Instance.CompleteRaceTrack();
         }

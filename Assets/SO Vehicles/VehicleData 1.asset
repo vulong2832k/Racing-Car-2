@@ -17,3 +17,4 @@ MonoBehaviour:
   steeringForce: 180
   brakeForce: 30
   vehicleImage: {fileID: 21300000, guid: eb22dd77eb5e2bf4ca4404a019593a84, type: 3}
+  vehiclePrefabs: {fileID: 1728767845889284991, guid: 09d87da55962ff140b08efe11f88c5df, type: 3}

@@ -1,16 +1,25 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class VehicleSelectionManager : MonoBehaviour
 {
-    [SerializeField] private VehicleData[] _vehicles;
+    [Header("Data:")]
     [SerializeField] private Image _vehicleDisplay;
+    [SerializeField] private VehicleData[] _vehicles;
+    [SerializeField] private MenuController _menuController;
+    [Header("GameObject:")]
+    [SerializeField] private GameObject _SelectCarPanel;
+    [SerializeField] private GameObject _MenuPanel;
+    [Header("Selection:")]
+    [SerializeField] private RectTransform _selectionTick;
+    //[SerializeField] private RectTransform[] _vehiclePositions;
+    [Header("Button:")]
     [SerializeField] private Button _nextBtn;
     [SerializeField] private Button _PreviousBtn;
     [SerializeField] private Button _confirmBtn;
-    [SerializeField] private Button _playBtn;
+    [SerializeField] private Button _exitPanelSelectCarBtn;
 
     private int _currentVehicleIndex = 0;
 
@@ -18,7 +27,10 @@ public class VehicleSelectionManager : MonoBehaviour
     void Start()
     {
         UpdateVehicleDisplay();
-        _playBtn.interactable = PlayerPrefs.HasKey("SelectedVehicle");
+        ResetVehicleSelection();
+        _menuController._playBtn.interactable = PlayerPrefs.HasKey("SelectedVehicle");
+        UpdateSelectionTick();
+        _selectionTick.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -34,21 +46,44 @@ public class VehicleSelectionManager : MonoBehaviour
     {
         _currentVehicleIndex = (_currentVehicleIndex + 1) % _vehicles.Length;
         UpdateVehicleDisplay();
+        UpdateSelectionTick();
     }
     public void PreviousVehicle()
     {
         _currentVehicleIndex = (_currentVehicleIndex - 1 + _vehicles.Length) % _vehicles.Length;
         UpdateVehicleDisplay();
+        UpdateSelectionTick();
     }
     public void ConfirmSelection()
     {
         PlayerPrefs.SetString("SelectedVehicle", _vehicles[_currentVehicleIndex].name);
-        _playBtn.interactable = true;
+        _menuController._playBtn.interactable = true;
+        UpdateSelectionTick();
     }
-    public void PlayGame()
+    private void ResetVehicleSelection()
     {
-        if (!PlayerPrefs.HasKey("SelectedVehicle")) return;
-
-        UnityEngine.SceneManagement.SceneManager.LoadScene("GamePlay");
+        if (PlayerPrefs.HasKey("SelectedVehicle"))
+        {
+            PlayerPrefs.DeleteKey("SelectedVehicle");
+        }
+        _menuController._playBtn.interactable = false;
+        _selectionTick.gameObject.SetActive(false);
+    }
+    public void ExitPanelSelectCar()
+    {
+        _SelectCarPanel.SetActive(false);
+        _MenuPanel.SetActive(true);
+    }
+    private void UpdateSelectionTick()
+    {
+        if (PlayerPrefs.HasKey("SelectedVehicle"))
+        {
+            _selectionTick.gameObject.SetActive(true);
+            _selectionTick.position = _vehicleDisplay.rectTransform.position;
+        }
+        else
+        {
+            _selectionTick.gameObject.SetActive(false);
+        }
     }
 }
