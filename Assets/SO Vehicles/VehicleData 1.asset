@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VehicleData 1
   m_EditorClassIdentifier: 
   vehicleName: Car 2
-  speed: 1300
+  speed: 1500
   steeringForce: 180
   brakeForce: 30
   vehicleImage: {fileID: 21300000, guid: eb22dd77eb5e2bf4ca4404a019593a84, type: 3}

@@ -11,13 +11,21 @@ public class GameManager : MonoBehaviour
     public bool _isWinGame = false;
     private bool _hasReachedCheckpoint = false;
     private static GameManager instance;
-    private float _resetTimeWhenComplete = 30f;
 
     //UI GameOver
     public GameObject gameOverObj;
     public GameObject timeGameOverObj;
     public GameObject speedTextObj;
     public GameObject winGameObj;
+
+    //Player
+    [SerializeField] private Vector3 _initialPlayerPosition;
+    [SerializeField] private Quaternion _initialPlayerRotation;
+    [SerializeField] private PlayerController _playerController;
+
+    // Out of bounds check
+    private float _offTrackTimer = 0f;
+    private float _maxOffTrackTime = 5f;
 
     public static GameManager Instance
     {
@@ -35,6 +43,12 @@ public class GameManager : MonoBehaviour
             return instance;
         }
     }
+    private void Start()
+    {
+        StartCoroutine(FindPlayerAfterDelay());
+        if (_playerController == null) return;
+        _initialPlayerPosition = _playerController.transform.position;
+    }
     private void Update()
     {
         if (_isPlaying)
@@ -47,18 +61,29 @@ public class GameManager : MonoBehaviour
                 gameOverObj.SetActive(true);
                 speedTextObj.SetActive(false);
                 EndGame();
-
             }
+            CheckOutOfBounds();
         }
         if (_isWinGame)
         {
             timeGameOverObj.SetActive(false);
             winGameObj.SetActive(true);
-
-
         }
     }
+    private IEnumerator FindPlayerAfterDelay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        FindPlayerController();
+    }
+    private void FindPlayerController()
+    {
+        GameObject player = GameObject.FindWithTag("Player");
 
+        if (player == null) return;
+        {
+            _playerController = player.GetComponentInChildren<PlayerController>();
+        }
+    }
     private void EndGame()
     {
         _isPlaying = false;
@@ -68,7 +93,6 @@ public class GameManager : MonoBehaviour
     {
         if (_isPlaying)
         {
-            _timeComplete = _resetTimeWhenComplete;
             _hasReachedCheckpoint = true;
         }
     }
@@ -82,6 +106,54 @@ public class GameManager : MonoBehaviour
         else if (!_isPlaying)
         {
             Debug.Log("Chưa chạm checkpoint!");
+        }
+    }
+    public void ResetPlayerPosition()
+    {
+        if (_playerController != null)
+        {
+            Rigidbody playerRigidbody = _playerController.GetComponent<Rigidbody>();
+            if (playerRigidbody != null)
+            {
+                // Reset Rigidbody
+                playerRigidbody.velocity = Vector3.zero;
+                playerRigidbody.angularVelocity = Vector3.zero;
+
+                // Di chuyển player đến vị trí ban đầu
+                playerRigidbody.MovePosition(_initialPlayerPosition);
+                playerRigidbody.MoveRotation(_initialPlayerRotation.normalized);
+            }
+            else
+            {
+                _playerController.transform.position = _initialPlayerPosition;
+                _playerController.transform.rotation = _initialPlayerRotation.normalized;
+            }
+
+            Debug.Log("Player position reset to: " + _initialPlayerPosition);
+            Debug.Log("Player rotation reset to: " + _initialPlayerRotation);
+        }
+        else
+        {
+            Debug.LogError("Player object is not assigned in the GameManager.");
+        }
+    }
+    private void CheckOutOfBounds()
+    {
+        if (_playerController == null) return;
+
+        if (!Physics.Raycast(_playerController.transform.position, Vector3.down, 10f))
+        {
+            _offTrackTimer += Time.deltaTime;
+
+            if (_offTrackTimer >= _maxOffTrackTime)
+            {
+                ResetPlayerPosition();
+                _offTrackTimer = 0;
+            }
+        }
+        else
+        {
+            _offTrackTimer = 0;
         }
     }
 }

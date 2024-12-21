@@ -38,8 +38,9 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        PlayerMovement();
         BrakeCarOfPlayer();
+        PlayerMovement();
+        
     }
     private void GetDataFromVehicleData()
     {
@@ -52,11 +53,9 @@ public class PlayerController : MonoBehaviour
     }
     private void PlayerMovement()
     {
-        float xDir;
-        float yDir;
 
-        xDir = Input.GetAxis("Horizontal");
-        yDir = Input.GetAxis("Vertical");
+        float xDir = Input.GetAxis("Horizontal");
+        float yDir = Input.GetAxis("Vertical");
 
         _playerRb.AddForce(transform.forward * yDir * _playerMoveSpeed * Time.deltaTime);
 
@@ -65,6 +64,7 @@ public class PlayerController : MonoBehaviour
             Quaternion TurnCar = Quaternion.Euler(Vector3.up * xDir * _playerTurnSpeed * Time.deltaTime);
             _playerRb.MoveRotation(_playerRb.rotation * TurnCar);
         }
+
         _brakeTrack.SetActive(false);
     }
     public float GetSpeedInKmh()
@@ -129,8 +129,8 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
-
     }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("CheckPoint"))
@@ -142,5 +142,13 @@ public class PlayerController : MonoBehaviour
             GameManager.Instance.CompleteRaceTrack();
         }
     }
-    
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            GameManager.Instance.ResetPlayerPosition();
+        }
+        
+    }
+
 }

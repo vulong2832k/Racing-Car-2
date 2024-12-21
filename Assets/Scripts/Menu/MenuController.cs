@@ -12,18 +12,29 @@ public class MenuController : MonoBehaviour
     [SerializeField] private Button _menuCarBtn;
 
     [Header("GameObject")]
-    [SerializeField] private GameObject _SelectCarPanel;
-    [SerializeField] private GameObject _MenuPanel;
+    [SerializeField] private GameObject _selectCarPanel;
+    [SerializeField] private GameObject _menuPanel;
+    [SerializeField] private GameObject _menuSelectionMap;
+    private void Start()
+    {
+        _menuPanel.SetActive(true);
+        _menuSelectionMap.SetActive(false);
+        _selectCarPanel.SetActive(false);
+
+    }
     public void PlayGame()
     {
         if (!PlayerPrefs.HasKey("SelectedVehicle")) return;
 
-        SceneManager.LoadScene("GamePlay");
+        _menuSelectionMap.SetActive(true);
+        _menuPanel.SetActive(false);
+        _selectCarPanel.SetActive(false);
+
     }
     public void OpenMenuCar()
     {
-        _SelectCarPanel.SetActive(true);
-        _MenuPanel.SetActive(false);
+        _selectCarPanel.SetActive(true);
+        _menuPanel.SetActive(false);
     }
     public void QuitGame()
     {
